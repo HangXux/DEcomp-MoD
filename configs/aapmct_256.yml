@@ -1,0 +1,65 @@
+data:
+    dataset: "AAPMCT"
+    category: "water_1mm"
+    image_size: 256
+    channels: 1
+    logit_transform: false
+    uniform_dequantization: false
+    gaussian_dequantization: false
+    random_flip: false
+    rescaled: true
+    num_workers: 0
+    downsample: false
+    sampling_angles: 90
+
+model:
+    type: "simple"
+    in_channels: 1
+    out_ch: 1
+    ch: 128
+    ch_mult: [1, 1, 2, 2, 4, 4]
+    num_res_blocks: 2
+    attn_resolutions: [16, ]
+    dropout: 0
+    var_type: fixedsmall
+    ema_rate: 0.999
+    ema: True
+    resamp_with_conv: True
+
+diffusion:
+    beta_schedule: linear
+    beta_start: 0.0001
+    beta_end: 0.02
+    num_diffusion_timesteps: 1000
+
+training:
+    batch_size: 4
+    n_epochs: 10000
+    n_iters: 5000000
+    snapshot_freq: 100000
+    validation_freq: 2000
+
+sampling:
+    batch_size: 1
+    last_only: True
+    noise_level_img: 0  # set AWGN noise level for LR image, default: 0
+    noise_level_model: 0
+    iter_num: 10
+    iter_num_U: 1
+    model_name: '256x256_diffusion_uncond'
+    sigma: max(0.001, noise_level_img)
+    lambda_: 12.
+    model_output_type: 'pred_xstart'  # model output type: pred_x_prev; pred_xstart; epsilon; score
+    generate_mode: 'DiffPIR'
+    skip_type: 'quad'  # uniform, quad
+    eta: 0.  # eta for ddim sampling
+    zeta: 0.3
+    guidance_scale: 1.0
+
+optim:
+    weight_decay: 0.000
+    optimizer: "Adam"
+    lr: 0.00002
+    beta1: 0.9
+    amsgrad: false
+    eps: 0.00000001
